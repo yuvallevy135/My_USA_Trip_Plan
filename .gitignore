@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!static
+!templates
+!db_creator.py
+!plan_usa_trip.py

@@ -1,4 +1,4 @@
-const username = "Niv"
+const username = "yuval"
 
 document.getElementById("greeting").innerText = "Hello " + username + "!"
 document.getElementById("tripsHeadline").innerText = "Saved trips:"
@@ -20,3 +20,5 @@ for (i = 0; i < acc.length; i++) {
     }
   });
 }
+
+

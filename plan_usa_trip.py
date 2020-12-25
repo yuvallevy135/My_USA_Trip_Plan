@@ -332,6 +332,7 @@ mysql = MySQL(app)
 # SELECT locations.*, plan_trip.campsites.phone, plan_trip.campsites.city FROM locations join plan_trip.campsites on locations.location_id = plan_trip.campsites.campsite_id
 
 
+# A function that creates a dynamic query
 def create_exists_query(select_what, table_name, value_name, extra_condition):
     select_part = "SELECT " + str(select_what)
     from_part = " FROM " + str(table_name)
@@ -340,6 +341,7 @@ def create_exists_query(select_what, table_name, value_name, extra_condition):
     return my_query
 
 
+# Check if the value that we are looking for is already in DB. If yes - let the user know!
 def abort_if_username_exist(table_name, value_name, value_id):
     # create connection to db to check if username in db.
     try:
@@ -355,6 +357,7 @@ def abort_if_username_exist(table_name, value_name, value_id):
         abort(409, message="Lost connection with DB")
 
 
+# Check if the value that we are looking for does not  in DB. If not - let the user know. Else - return it.
 def abort_if_username_doesnt_exist(select_what, table_name, value_name, value_id, extra_condition, method):
     try:
         # create connection to db to check if username in db.
@@ -382,6 +385,7 @@ def abort_if_username_doesnt_exist(select_what, table_name, value_name, value_id
         abort(409, message="Lost connection with DB")
 
 
+# A function that create a json back with the columns from the DB of the values that we want to return.
 def make_res_as_json_with_col_names(data, cur):
     row_headers = [x[0] for x in cur.description]  # this will extract row headers
     json_data = []
@@ -390,14 +394,23 @@ def make_res_as_json_with_col_names(data, cur):
     return json_data
 
 
-
-
-
+# A Class that takes care of everything that relates to the User table.
 class Username(Resource):
     # Add new user.
     # @app.route('/add_user', methods=['POST'])
     def post(self, username):
         try:
+            if request.method == 'POST':
+                data = request.form
+                username = data['username']
+                password = data['psw']
+                cur = mysql.connection.cursor()
+                my_query = """SELECT * FROM users where username = %s and password = %s"""
+                cur.execute(my_query, (username, password,))
+                user = cur.fetchall()
+                user = make_res_as_json_with_col_names(user, cur)
+                # json.dumps(user, use_decimal=True)
+                return redirect(url_for("dashboard", user_name=username))
             # data = request.get_json()
             data = request.form
             username = data['username']
@@ -425,17 +438,6 @@ class Username(Resource):
             if not username == 'login':
                 extra_condition = ""
                 user = abort_if_username_doesnt_exist('*', "users", 'username', username, extra_condition, 'get')
-            else:
-                data = request.get_json()
-                username = data['username']
-                password = data['password']
-                cur = mysql.connection.cursor()
-                my_query = """SELECT * FROM users where username = %s and password = %s"""
-                cur.execute(my_query, (username, password,))
-                user = cur.fetchall()
-                user = make_res_as_json_with_col_names(user, cur)
-                json.dumps(user, use_decimal=True)
-            return user
         except:
             abort(409, message="Lost connection with DB")
 
@@ -456,6 +458,7 @@ class Username(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Airbnb table.
 class Airbnb(Resource):
 
     # Add new user.
@@ -506,6 +509,7 @@ class Airbnb(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Parks table.
 class Parks(Resource):
     # Add new user.
     # @app.route('/add_user', methods=['POST'])
@@ -554,6 +558,7 @@ class Parks(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Campsites table.
 class Campsites(Resource):
 
     # Add new user.
@@ -604,6 +609,7 @@ class Campsites(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Cities table.
 class Cities(Resource):
 
     # Add new user.
@@ -661,6 +667,7 @@ class Cities(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Locations table.
 class Locations(Resource):
 
     def get(self):
@@ -690,6 +697,7 @@ class Locations(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Trips table.
 class Trips(Resource):
     def post(self, trip_id):
         try:
@@ -794,6 +802,7 @@ class Trips(Resource):
             abort(409, message="Lost connection with DB")
 
 
+# A Class that takes care of everything that relates to the Radius calculation.
 class Radius(Resource):
     def get(self):
         try:
@@ -825,10 +834,18 @@ class Radius(Resource):
         except:
             abort(409, message="Lost connection with DB")
 
-@app.route("/Dashboard")
-def dashboard():
+@app.route("/<user_name>")
+def dashboard(user_name):
     #http://127.0.0.1:5500
-    return render_template("Dashboard.html")
+    return render_template("Dashboard.html", username=user_name)
+
+
+@app.route("/MemberIndex")
+def memberIndex():
+    #http://127.0.0.1:5500
+    return render_template("MemberIndex.html")
+
+
 
 @app.route("/")
 def home():
