@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="en" id=fullheight>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+            crossorigin="">
+    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="Styles/Main.css">
+    <link rel="stylesheet" type="text/css" href="Styles/Autocomplete.css">
+    <link rel="stylesheet" type="text/css" href="Styles/Signup.css">
+    <link rel="stylesheet" type="text/css" href="Styles/Login.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+
+    <script src="./Scripts/Map.js" async></script>
+    <script src="./Scripts/ModalExit.js" async></script>
+    <script src="./Scripts/AutoComplete.js" async></script>
+    <script src="./Scripts/Signup.js" async></script>
+    <script src="./Scripts/Login.js" async></script>
+    <script src="./Scripts/FlowManager.js" async></script>
+    <script src="./Scripts/Index.js" async></script>
+       <!-- <script src="Scripts/DragnDrop.js" async></script>
+    <script src="Scripts/Time.js" async></script>
+    <script src="Scripts/DataHandler.js" async></script>
+    <script src="Scripts/Notifications.js" async></script>
+    <script src="Scripts/Flight.js" async></script> -->
+    <title>My USA Trip Plan</title>
+  </head>
+
+      <!-- navbar here -->
+      <nav class="navbar navbar-expand-md navbar-light" style="background-color: #f1f0f0;">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="./Index.html">Start new trip</a>
+              </li>
+            </ul>
+        </div>
+        <div class="mx-auto order-0">
+            <a id="mainHeadline" class="navbar-brand mx-auto" href="./Index.html">My USA Trip Plan</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="document.getElementById('signupDiv').style.display='block'">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="document.getElementById('loginDiv').style.display='block'">Log In</a>
+                </li>
+            </ul>
+        </div>
+    </nav>  
+
+  <body>
+
+    <div class="container-fluid rounded whole-container text-center">
+      <div id=main-row class="row justify-content-center my-row">
+          <!-- Left side bar -->
+          <div class="col-3 justify-content-center my-col">
+            <br>
+            <div class="container">
+              <div id="trip-header">
+                <h4>Plan your trip</h4>
+                <img src="./Pictures/roadtrip.jpg" width="100%" height="50%">
+                <br>
+              </div>
+              <div id="trip-locations">
+                <br>
+                <!--Make sure the form has the autocomplete function switched off:-->
+                <form autocomplete="off" action="#">
+                  <div class="autocomplete" style="width:100%;">
+                    <input id="sourceCountry" type="text" name="myCountry" placeholder="Country">
+                    <br>
+                    <br>
+                    <input id="destinationCountry" type="text" name="myCountry" placeholder="Country">
+                  </div>
+                  <br>
+                  <br>
+                  <input id="plantrip" type="submit" value="Plan Trip!">
+                </form>
+
+                <!-- Signup -->
+                <div id="signupDiv" class="modal">
+                  <span onclick="document.getElementById('signupDiv').style.display='none'" class="close" title="Close Modal">&times;</span>
+                  <!-- http://127.0.0.1:5000/users/ -->
+                  <!-- method="POST" -->
+                  <form id="signupForm" class="modal-content animate" action="./Pages/Dashboard.html" onsubmit="return validateSignup()">
+                    <div class="container">
+                      <h1>Sign Up</h1>
+                      <p>Please fill in this form to create an account.</p>
+                      <hr>
+                      
+                      <label for="username"><b>User name</b></label>
+                      <input type="text" placeholder="Enter User name" name="username" required>
+
+                      <label for="psw"><b>Password</b></label>
+                      <input type="password" placeholder="Enter Password" name="psw" required>              
+
+                      <label for="email"><b>Email</b></label>
+                      <input type="text" placeholder="Enter Email" name="email" required>
+
+                      <label for="home_country"><b>Home state</b></label>
+                      <input id="signUpState" class="autocomplete" type="text" name="myCountry" placeholder="Country" required>
+                      <button type="submit" class="signup">Sign Up</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Login -->
+                <div id="loginDiv" class="modal">
+                  <span onclick="document.getElementById('loginDiv').style.display='none'"
+                  class="close" title="Close Modal">&times;
+                  </span>
+                  <!-- action="http://127.0.0.1:5000/users/login" -->
+                  <!-- method="POST" -->
+                  <!-- Modal Content -->
+                  <form id="loginForm" class="modal-content animate" action="./Pages/Dashboard.html" onsubmit="return validateLogin()">
+                    <div class="imgcontainer">
+                      <img src="Pictures/avatar.png" alt="Avatar" class="avatar">
+                    </div>
+                    <div class="container">
+                      <label for="username"><b>Username</b></label>
+                      <input type="text" placeholder="Enter Username" name="username" required>
+
+                      <label for="psw"><b>Password</b></label>
+                      <input type="password" placeholder="Enter Password" name="psw" required>
+
+                      <button type="submit">Login</button>                    
+                    </div>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <!-- Map side -->
+          <div id="mapid" class="col-9 justify-content-center my-col">
+          </div>
+      </div>
+    </div>
+
+  </body>
+</html>
+
+
+<!-- <div class="container my-flights-container rounded">
+    <table id="myflightstable" class="table table-bordered">
+        <tr>
+            <th>Flight ID</th>
+            <th>Airline</th>
+            <th>Remove</th>
+        </tr>
+    </table>
+</div> -->

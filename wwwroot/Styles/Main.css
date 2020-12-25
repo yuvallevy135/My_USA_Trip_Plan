@@ -1,0 +1,100 @@
+﻿/* html {
+    height: 100vmx;
+} */
+
+* { padding: 0; margin: 0; }
+html, body, #fullheight {
+    min-height: 100% !important;
+    height: 100%;
+    min-width: 100 !important;
+    width: 100%;
+}
+#fullheight {
+    width: 100%;
+}
+
+.headline {
+    text-align: center;
+    color: black;
+}
+
+.rounded {
+    border-radius: 0.5rem !important
+}
+
+a {
+    font: 20px Arial;
+}
+
+#mainHeadline {
+    font: 26px Arial;}
+
+
+/* grid style */
+body {
+    margin: 0px;
+    background-position: center;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    font: 16px Arial;
+    
+}
+
+.whole-container {
+    /* border: 1px solid black; */
+    /* height: 94%; */
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    /* top: 6%; */
+    /* background-color: lightblue; */
+}
+
+.my-flights-container {
+    border: 1px solid black;
+    overflow: auto;
+    height: 95%;
+}
+
+#main-row {
+    height: 100%;
+}
+
+/* map style */
+#mapid {
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+}
+
+#plantrip {
+  opacity: 90%;
+}
+
+#plantrip:hover {
+  opacity: 100%;
+}
+
+
+/* scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #91cee0;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
