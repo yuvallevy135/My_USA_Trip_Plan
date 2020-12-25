@@ -5,7 +5,7 @@ import simplejson as json
 # from flask_restful.representations import json
 from mysql.connector import errorcode
 from csv import reader, writer
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, render_template, url_for
 from flask_restful import Api, Resource, abort
 from flask_mysqldb import MySQL
 
@@ -17,6 +17,7 @@ PARKS_ROW_COLUMNS = [6, 21]  # id
 PARKS_ROW_LOCATIONS_COLUMNS = [23, 24]  # type, id
 AIRBNB_ROW_COLUMNS = [0, 6, 13, 15, 16]  # id
 AIRBNB_ROW_LOCATIONS_COLUMNS = [1, 7, 11, 12]  # type, id
+DASHBOARD_URL = "http://127.0.0.1:5500/wwwroot/Dashboard.html"
 #
 #
 # def main():
@@ -389,13 +390,17 @@ def make_res_as_json_with_col_names(data, cur):
     return json_data
 
 
-class Username(Resource):
 
+
+
+class Username(Resource):
     # Add new user.
     # @app.route('/add_user', methods=['POST'])
     def post(self, username):
         try:
-            data = request.get_json()
+            # data = request.get_json()
+            data = request.form
+            username = data['username']
             param = []
             for i in data:
                 param.append(data[i])
@@ -406,8 +411,12 @@ class Username(Resource):
             cur.execute(my_query, param)
             mysql.connection.commit()
             mysql.connection.close()
-            return 201
-            # return username, 204
+            try:
+                return redirect(url_for("dashboard"))
+                # return render_template("http://127.0.0.1:5500/wwwroot/Pages/Dashboard.html")
+                # return username, 204
+            except Exception as e:
+                print("Problem: " + str(e))
         except:
             abort(409, message="Lost connection with DB")
 
@@ -816,6 +825,15 @@ class Radius(Resource):
         except:
             abort(409, message="Lost connection with DB")
 
+@app.route("/Dashboard")
+def dashboard():
+    #http://127.0.0.1:5500
+    return render_template("Dashboard.html")
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 
 api.add_resource(Username, "/users/<string:username>")
 api.add_resource(Airbnb, "/airbnb/<string:airbnb_id>")
@@ -827,8 +845,8 @@ api.add_resource(Locations, "/locations")
 api.add_resource(Radius, "/radius")
 if __name__ == "__main__":
     # main()
-    db_creator = DbCreator
-    db_creator.create_db(self)
+    # db_creator = DbCreator
+    # db_creator.create_db(self)
     app.run(debug=True)
 
 # ...............................................................................
