@@ -131,7 +131,7 @@
                   <!-- Modal Content -->
                   <form id="loginForm" class="modal-content animate" action="./Pages/Dashboard.html" onsubmit="return validateLogin()">
                     <div class="imgcontainer">
-                      <img src="Pictures/avatar.png" alt="Avatar" class="avatar">
+                      <img src="{{ url_for('static',filename='Pictures/avatar.png) }}" class="avatar">
                     </div>
                     <div class="container">
                       <label for="username"><b>Username</b></label>
