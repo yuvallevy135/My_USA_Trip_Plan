@@ -834,6 +834,18 @@ class Radius(Resource):
         except:
             abort(409, message="Lost connection with DB")
 
+
+@app.route("/livesearch", methods=["POST","GET"])
+def livesearch():
+    searchbox = request.form.get("text")
+    cursor = mysql.connection.cursor()
+    query = "select city, state from cities where city LIKE '{}%' order by city limit 0,20".format(searchbox)#This is just example query , you should replace field names with yours
+    cursor.execute(query)
+    result = cursor.fetchall()
+    result = make_res_as_json_with_col_names(result, cursor)
+    return jsonify(result)
+
+
 @app.route("/<user_name>")
 def dashboard(user_name):
     #http://127.0.0.1:5500

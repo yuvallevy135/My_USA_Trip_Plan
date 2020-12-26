@@ -81,7 +81,7 @@
               </div>
               <div id="trip-locations">
                 <br>
-                <!--Make sure the form has the autocomplete function switched off:-->
+                <!-- Make sure the form has the autocomplete function switched off:
                 <form autocomplete="off" action="#">
                   <div class="autocomplete" style="width:100%;">
                     <input id="sourceCountry" type="text" name="myCountry" placeholder="Country">
@@ -92,7 +92,38 @@
                   <br>
                   <br>
                   <input id="plantrip" type="submit" value="Plan Trip!">
+                </form> -->
+
+                <form autocomplete="off" action="#">
+                  <div class="autocomplete" style="width:100%;">
+                    <input id="sourceCountry" type="text" name="myCountry" placeholder="Country">
+                    <p id = "datalist"></p>
+                  </div>
+                  <br>
+                  <br>
+                  <!-- <input id="plantrip" type="submit" value="Plan Trip!"> -->
                 </form>
+
+                <script>
+                  $(document).ready(function(){
+                      $("#sourceCountry").on("input",function(e){
+                          $("#datalist").empty();
+                          $.ajax({
+                              method:"post",
+                              url:"/livesearch",
+                              data:{text:$("#sourceCountry").val()},
+                              success:function(res){
+                                  var data = "<ul>";
+                                  $.each(res,function(index,value){
+                                      data += "<li>"+value.city+"</li>";
+                                  });
+                                  data += "</ul>";
+                                  $("#datalist").html(data);
+                              }
+                          });
+                      });
+                  });
+              </script>
 
                 <!-- Signup -->
                 <div id="signupDiv" class="modal">
