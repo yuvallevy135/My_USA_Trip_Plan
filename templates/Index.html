@@ -81,50 +81,167 @@
               </div>
               <div id="trip-locations">
                 <br>
-                <!-- Make sure the form has the autocomplete function switched off:
+
                 <form autocomplete="off" action="#">
                   <div class="autocomplete" style="width:100%;">
                     <input id="sourceCountry" type="text" name="myCountry" placeholder="Country">
+                    <ul id="startCities"></ul>
                     <br>
                     <br>
                     <input id="destinationCountry" type="text" name="myCountry" placeholder="Country">
+                    <ul id="destinationCities"></ul>
                   </div>
                   <br>
                   <br>
-                  <input id="plantrip" type="submit" value="Plan Trip!">
-                </form> -->
 
-                <form autocomplete="off" action="#">
-                  <div class="autocomplete" style="width:100%;">
-                    <input id="sourceCountry" type="text" name="myCountry" placeholder="Country">
-                    <p id = "datalist"></p>
-                  </div>
-                  <br>
-                  <br>
-                  <!-- <input id="plantrip" type="submit" value="Plan Trip!"> -->
+                  <input id="plantrip" type="submit" value="Plan Trip!">
                 </form>
 
+
+                <style>
+                  * {
+                    box-sizing: border-box;
+                  }
+                  
+                  #myInput {
+                    background-image: url('/css/searchicon.png');
+                    background-position: 10px 12px;
+                    background-repeat: no-repeat;
+                    width: 100%;
+                    font-size: 16px;
+                    padding: 12px 20px 12px 40px;
+                    border: 1px solid #ddd;
+                    margin-bottom: 12px;
+                  }
+                  
+                  /* #myUL {
+                    list-style-type: none;
+                    padding: 0;
+                    margin: 0;
+                  } */
+                  #datalist {
+                    list-style-type: none;
+                    padding: 0;
+                    margin: 0;
+                  }
+                  
+                  li {
+                    border: 1px solid #ddd;
+                    margin-top: -1px; /* Prevent double borders */
+                    background-color: #f6f6f6;
+                    padding: 12px;
+                    text-decoration: none;
+                    font-size: 18px;
+                    color: black;
+                    display: block;
+                    cursor: pointer;                    
+                  }
+                  
+                  li a:hover:not(.header) {
+                    background-color: #eee;
+                  }
+                  </style>              
+          
                 <script>
+                  let startCitiesUl = document.getElementById('startCities');
                   $(document).ready(function(){
-                      $("#sourceCountry").on("input",function(e){
-                          $("#datalist").empty();
-                          $.ajax({
+                      $("#sourceCountry").on("input",function(e){                      
+                          $("#startCities").empty();
+                          if ($("#sourceCountry").val() !== "") {
+                            $.ajax({
                               method:"post",
                               url:"/livesearch",
                               data:{text:$("#sourceCountry").val()},
-                              success:function(res){
-                                  var data = "<ul>";
+                              success:function(res){  
                                   $.each(res,function(index,value){
-                                      data += "<li>"+value.city+"</li>";
-                                  });
-                                  data += "</ul>";
-                                  $("#datalist").html(data);
+                                    let listElement = document.createElement('li')
+                                    listElement.innerText = value.city;
+                                    listElement.addEventListener('click', () => {
+                                        chooseStartCity(value.city);
+                                    }, false);
+                                    startCitiesUl.appendChild(listElement)
+                                  });                                                                                                     
                               }
-                          });
+                            });
+                          }                         
                       });
                   });
+
+                  $(document).ready(function() {
+                      $("#sourceCountry").on("input",function(e){
+                        if ($("#sourceCountry").val() == "") {
+                          $("#startCities").empty();
+                        }
+                      });
+                  });
+                
+                  function chooseStartCity(city) {
+                    $("#sourceCountry").val(city)
+                    $("#startCities").empty();
+                  }
               </script>
 
+              <script>
+                let destCitiesUl = document.getElementById('destinationCities');
+                $(document).ready(function(){
+                    $("#destinationCountry").on("input",function(e){                      
+                        $("#destinationCities").empty();
+                        if ($("#destinationCountry").val() !== "") {
+                          $.ajax({
+                            method:"post",
+                            url:"/livesearch",
+                            data:{text:$("#destinationCountry").val()},
+                            success:function(res){  
+                                $.each(res,function(index,value){
+                                  let listElement = document.createElement('li')
+                                  listElement.innerText = value.city;
+                                  listElement.addEventListener('click', () => {
+                                      chooseDestinationCity(value.city);
+                                  }, false);
+                                  destCitiesUl.appendChild(listElement)
+                                });                                                                                                     
+                            }
+                          });
+                        }                         
+                    });
+                });
+
+                $(document).ready(function() {
+                    $("#destinationCountry").on("input",function(e){
+                      if ($("#destinationCountry").val() == "") {
+                        $("#destinationCities").empty();
+                      }
+                    });
+                });
+
+                function chooseDestinationCity(city) {
+                  $("#destinationCountry").val(city)
+                  $("#destinationCities").empty();
+                }
+              </script>
+
+              <script>        
+              $("#plantrip").click(function(e) {
+              e.preventDefault();
+              const sourceCity = $("#sourceCountry").val()
+              const destCity = $("#destinationCountry").val()
+              $.ajax({
+                  type: "POST",
+                  contentType: 'application/json;charset=UTF-8',
+                  url: "http://127.0.0.1:5000/cities/start_cities",
+                  data: JSON.stringify({cities: [sourceCity, destCity]}),
+                  success: function(result) {
+                      console.log(result);
+                  },
+                  error: function(result) {
+                      alert('error');
+                  },
+                  dataType: "json",
+                });
+              });            
+              </script>
+
+              
                 <!-- Signup -->
                 <div id="signupDiv" class="modal">
                   <span onclick="document.getElementById('signupDiv').style.display='none'" class="close" title="Close Modal">&times;</span>

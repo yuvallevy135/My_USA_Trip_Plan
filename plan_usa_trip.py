@@ -616,19 +616,30 @@ class Cities(Resource):
     # @app.route('/add_user', methods=['POST'])
     def post(self, city_id):
         try:
-            data = request.get_json()
-            param = []
-            for i in data:
-                param.append(data[i])
-            abort_if_username_exist('cities', 'city', city_id)
-            cur = mysql.connection.cursor()
-            my_query = 'INSERT INTO cities VALUES(%s,%s,%s,%s,%s,%s)'
-            # param = (username, password, email)
-            cur.execute(my_query, param)
-            mysql.connection.commit()
-            mysql.connection.close()
-            return 201
-            # return username, 204
+            if request.method == 'POST':
+                # data = request.get_json()
+                data = request.json
+                cities_list = []
+                for city in data['cities']:
+                    extra_condition = ""
+                    city = abort_if_username_doesnt_exist('*', 'cities', 'city', city, extra_condition, 'get')
+                    cities_list.append(city)
+                json.dumps(cities_list, use_decimal=True)
+                return cities_list
+            else:
+                data = request.get_json()
+                param = []
+                for i in data:
+                    param.append(data[i])
+                abort_if_username_exist('cities', 'city', city_id)
+                cur = mysql.connection.cursor()
+                my_query = 'INSERT INTO cities VALUES(%s,%s,%s,%s,%s,%s)'
+                # param = (username, password, email)
+                cur.execute(my_query, param)
+                mysql.connection.commit()
+                mysql.connection.close()
+                return 201
+                # return username, 204
         except:
             abort(409, message="Lost connection with DB")
 
@@ -639,15 +650,15 @@ class Cities(Resource):
                 extra_condition = ""
                 user = abort_if_username_doesnt_exist('*', 'cities', 'city', city_id, extra_condition, 'get')
                 return user
-            else:
-                data = request.get_json()
-                cities_list = []
-                for city in data['cities']:
-                    extra_condition = ""
-                    city = abort_if_username_doesnt_exist('*', 'cities', 'city', city, extra_condition, 'get')
-                    cities_list.append(city)
-                json.dumps(cities_list, use_decimal=True)
-            return cities_list
+            # else:
+            #     data = request.get_json()
+            #     cities_list = []
+            #     for city in data['cities']:
+            #         extra_condition = ""
+            #         city = abort_if_username_doesnt_exist('*', 'cities', 'city', city, extra_condition, 'get')
+            #         cities_list.append(city)
+            #     json.dumps(cities_list, use_decimal=True)
+            # return cities_list
         except:
             abort(409, message="Lost connection with DB")
 
@@ -839,7 +850,7 @@ class Radius(Resource):
 def livesearch():
     searchbox = request.form.get("text")
     cursor = mysql.connection.cursor()
-    query = "select city, state from cities where city LIKE '{}%' order by city limit 0,20".format(searchbox)#This is just example query , you should replace field names with yours
+    query = "select city from cities where city LIKE '{}%' order by city limit 0,2".format(searchbox)#This is just example query , you should replace field names with yours
     cursor.execute(query)
     result = cursor.fetchall()
     result = make_res_as_json_with_col_names(result, cursor)
