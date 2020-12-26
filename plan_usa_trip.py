@@ -744,7 +744,8 @@ class Trips(Resource):
                 # select_what = "trips.trip_id, location_id, station_number"
                 select_what = "location_id, station_number"
                 table_name = "trips join waypoints_in_trip"
-                condition = "order by station_number"
+                condition = "on trips.trip_id = waypoints_in_trip.trip_id " \
+                            "order by trips.trip_id, waypoints_in_trip.station_number"
                 data = abort_if_username_doesnt_exist(select_what, table_name, 'trips.trip_id', trip_id, condition, 'get')
             else:
                 select_what = "select trips.trip_id, location_id, station_number "
@@ -850,7 +851,7 @@ class Radius(Resource):
 def livesearch():
     searchbox = request.form.get("text")
     cursor = mysql.connection.cursor()
-    query = "select city from cities where city LIKE '{}%' order by city limit 0,2".format(searchbox)#This is just example query , you should replace field names with yours
+    query = "select city,state from cities where city LIKE '{}%' order by city limit 0,5".format(searchbox)#This is just example query , you should replace field names with yours
     cursor.execute(query)
     result = cursor.fetchall()
     result = make_res_as_json_with_col_names(result, cursor)

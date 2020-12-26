@@ -84,18 +84,23 @@
 
                 <form autocomplete="off" action="#">
                   <div class="autocomplete" style="width:100%;">
-                    <input id="sourceCountry" type="text" name="myCountry" placeholder="Country">
+                    <h5>STARTING FROM</h5>
+                    <input id="sourceCountry" type="text" name="myCountry" placeholder="City">
                     <ul id="startCities"></ul>
-                    <br>
-                    <br>
-                    <input id="destinationCountry" type="text" name="myCountry" placeholder="Country">
+                    <h5>LAST DESTINATION</h5>
+                    <input id="destinationCountry" type="text" name="myCountry" placeholder="City">
                     <ul id="destinationCities"></ul>
                   </div>
                   <br>
                   <br>
 
-                  <input id="plantrip" type="submit" value="Plan Trip!">
+                  <input id="plantrip" type="submit" value="Plan Trip!" onclick="hideSearch()">
                 </form>
+
+                <div id="locations" style="display: none;">
+                  <h6>STARTING FROM</h6>
+                  <h6>LAST DESTINATION</h6>
+                </div>
 
 
                 <style>
@@ -155,7 +160,7 @@
                               success:function(res){  
                                   $.each(res,function(index,value){
                                     let listElement = document.createElement('li')
-                                    listElement.innerText = value.city;
+                                    listElement.innerText = value.city + ', ' + value.state ;
                                     listElement.addEventListener('click', () => {
                                         chooseStartCity(value.city);
                                     }, false);
@@ -194,7 +199,7 @@
                             success:function(res){  
                                 $.each(res,function(index,value){
                                   let listElement = document.createElement('li')
-                                  listElement.innerText = value.city;
+                                  listElement.innerText = value.city + ', ' + value.state;
                                   listElement.addEventListener('click', () => {
                                       chooseDestinationCity(value.city);
                                   }, false);
@@ -220,7 +225,17 @@
                 }
               </script>
 
-              <script>        
+              <script>  
+              function processCities(result) {
+                if ($.isEmptyObject(result)) {
+                  return
+                }
+                let startCity = result[0][0]
+                let destCity = result[1][0]
+                return [startCity, destCity]               
+              }
+              
+
               $("#plantrip").click(function(e) {
               e.preventDefault();
               const sourceCity = $("#sourceCountry").val()
@@ -231,75 +246,86 @@
                   url: "http://127.0.0.1:5000/cities/start_cities",
                   data: JSON.stringify({cities: [sourceCity, destCity]}),
                   success: function(result) {
-                      console.log(result);
+                      const cities = processCities(result)
+                      addCityToMap(cities[0])
+                      addCityToMap(cities[1])
                   },
                   error: function(result) {
-                      alert('error');
+                      alert('error: unable to submit');
                   },
                   dataType: "json",
                 });
-              });            
+              });
               </script>
 
-              
-                <!-- Signup -->
-                <div id="signupDiv" class="modal">
-                  <span onclick="document.getElementById('signupDiv').style.display='none'" class="close" title="Close Modal">&times;</span>
-                  <!-- http://127.0.0.1:5000/users/ -->
-                  <!-- method="POST" -->
-                  <form id="signupForm" class="modal-content animate" action="http://127.0.0.1:5000/users/username" method="POST" onsubmit="return validateSignup()">
-                    <div class="container">
-                      <h1>Sign Up</h1>
-                      <p>Please fill in this form to create an account.</p>
-                      <hr>
-                      
-                      <label for="username"><b>User name</b></label>
-                      <input type="text" placeholder="Enter User name" name="username" required>
-
-                      <label for="psw"><b>Password</b></label>
-                      <input type="password" placeholder="Enter Password" name="psw" required>              
-
-                      <label for="email"><b>Email</b></label>
-                      <input type="text" placeholder="Enter Email" name="email" required>
-
-                      <label for="home_country"><b>Home state</b></label>
-                      <input id="signUpState" class="autocomplete" type="text" name="myCountry" placeholder="Country" required>
-                      <button type="submit" class="signup">Sign Up</button>
-                    </div>
-                  </form>
-                </div>
-
-                <!-- Login -->
-                <div id="loginDiv" class="modal">
-                  <span onclick="document.getElementById('loginDiv').style.display='none'"
-                  class="close" title="Close Modal">&times;
-                  </span>
-                  <!-- action="http://127.0.0.1:5000/users/login" -->
-                  <!-- method="POST" -->
-                  <!-- Modal Content -->
-                  <form id="loginForm" class="modal-content animate" action="http://127.0.0.1:5000/users/login" method="POST" onsubmit="return validateLogin()">
-                    <div class="imgcontainer">
-                      <img src="{{ url_for('static',filename='Pictures/avatar.png') }}" class="avatar">
-                    </div>
-                    <div class="container">
-                      <label for="username"><b>Username</b></label>
-                      <input type="text" placeholder="Enter Username" name="username" required>
-
-                      <label for="psw"><b>Password</b></label>
-                      <input type="password" placeholder="Enter Password" name="psw" required>
-
-                      <button type="submit">Login</button>                    
-                    </div>
-                  </form>
-                </div>
+              <script>
+                function hideSearch() {
+                  const searchDiv = document.getElementById("trip-locations")
+                  searchDiv.style.display = "none"
+                   const locationsDiv =  document.getElementById("locations")
+                   locationsDiv.style.display = "block"
+                }
+                </script>
 
               </div>
+              
             </div>
           </div>
           <!-- Map side -->
           <div id="mapid" class="col-9 justify-content-center my-col">
           </div>
       </div>
+    </div>
+
+    <!-- Signup -->
+    <div id="signupDiv" class="modal">
+      <span onclick="document.getElementById('signupDiv').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <!-- http://127.0.0.1:5000/users/ -->
+      <!-- method="POST" -->
+      <form id="signupForm" class="modal-content animate" action="http://127.0.0.1:5000/users/username" method="POST" onsubmit="return validateSignup()">
+        <div class="container">
+          <h1>Sign Up</h1>
+          <p>Please fill in this form to create an account.</p>
+          <hr>
+          
+          <label for="username"><b>User name</b></label>
+          <input type="text" placeholder="Enter User name" name="username" required>
+
+          <label for="psw"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="psw" required>              
+
+          <label for="email"><b>Email</b></label>
+          <input type="text" placeholder="Enter Email" name="email" required>
+
+          <label for="home_country"><b>Home state</b></label>
+          <input id="signUpState" class="autocomplete" type="text" name="myCountry" placeholder="Country" required>
+          <button type="submit" class="signup">Sign Up</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Login -->
+    <div id="loginDiv" class="modal">
+      <span onclick="document.getElementById('loginDiv').style.display='none'"
+      class="close" title="Close Modal">&times;
+      </span>
+      <!-- action="http://127.0.0.1:5000/users/login" -->
+      <!-- method="POST" -->
+      <!-- Modal Content -->
+      <form id="loginForm" class="modal-content animate" action="http://127.0.0.1:5000/users/login" method="POST" onsubmit="return validateLogin()">
+        <div class="imgcontainer">
+          <img src="{{ url_for('static',filename='Pictures/avatar.png') }}" class="avatar">
+        </div>
+        <div class="container">
+          <label for="username"><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" required>
+
+          <label for="psw"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="psw" required>
+
+          <button type="submit">Login</button>                    
+        </div>
+      </form>
     </div>
 
   </body>

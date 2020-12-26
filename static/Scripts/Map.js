@@ -10,6 +10,36 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoicGlrYWNodTIzIiwiYSI6ImNrYTJramNkMDAydWEzZnA5M2l5Zmdnc28ifQ.kw350v1vaUcIs6r6oz8p2g'
 }).addTo(mymap);
 
+const shownLocations = []
+
+const cityIcon = L.icon({
+    // iconUrl: "{{ url_for('static',filename='Pictures/city.png') }}",
+    iconUrl: "/static/Pictures/city.png",
+    iconSize: [45, 45],
+    iconAnchor: [0, 0]
+});
+
+const parkIcon = L.icon({
+    // iconUrl: "{{ url_for('static',filename='Pictures/city.png') }}",
+    iconUrl: "/static/Pictures/park.png",
+    iconSize: [45, 45],
+    iconAnchor: [0, 0]
+});
+
+const campIcon = L.icon({
+    // iconUrl: "{{ url_for('static',filename='Pictures/city.png') }}",
+    iconUrl: "/static/Pictures/camp.png",
+    iconSize: [45, 45],
+    iconAnchor: [0, 0]
+});
+
+const airbnbIcon = L.icon({
+    // iconUrl: "{{ url_for('static',filename='Pictures/city.png') }}",
+    iconUrl: "/static/Pictures/airbnb.png",
+    iconSize: [45, 45],
+    iconAnchor: [0, 0]
+});
+
 // Sets the unselected plane icon.
 const unselectedIcon = L.icon({
     iconUrl: 'Pictures/unselectedIcon.png',
@@ -40,18 +70,21 @@ function releaseClick() {
 
 // Release the selected flight in case of clicking the map.
 function onMapClick() {
-    releaseClick();
+    // releaseClick();
 }
 
 // The set of actions to do when we want to select a flight.
-function onMarkerClick(marker) {
-    if (isMarkerClicked) {
-        releaseClick();
-    }
-    marker.setIcon(selectedIcon);
+function onCityClick(marker, city) {
+    // if (isMarkerClicked) {
+    //     releaseClick();
+    // }
+    // marker.setIcon(selectedIcon);
+    marker.openPopup()
+    // let latlang = L.LatLng(city.latitude, city.longitude)
+    // const popup = L.popup().setLatLng(latlang).setContent('<p>Hello world!<br />This is a nice popup.</p>').openOn(mymap);
     isMarkerClicked = true;
     clickedMarker = marker;
-    linkRowDetailsTrack(marker, 'link');
+    // linkRowDetailsTrack(marker, 'link');
 }
 
 // Sets a new location for the marker,
@@ -62,12 +95,15 @@ function moveMarker(marker, lat, lon) {
 }
 
 // Adds an airplane marker to the map.
-function addAirplaneIconToMap(latitude, longitude) {
-    const marker = new L.Marker([latitude, longitude], { icon: unselectedIcon });
+function addCityToMap(city) {
+    const marker = new L.Marker([city.latitude, city.longitude], { icon: cityIcon });
+    const popupContent = '<h6>' + city.city + ', ' + city.state + '</h6>'
+    marker.bindPopup(popupContent)
     marker.addEventListener('click', () => {
-        onMarkerClick(marker);
+        onCityClick(marker, city);  
     }, false);
     mymap.addLayer(marker);
+    shownLocations.push(city)
     return marker;
 }
 
