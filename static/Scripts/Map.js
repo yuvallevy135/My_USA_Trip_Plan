@@ -11,6 +11,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 }).addTo(mymap);
 
 const shownLocations = []
+const shownMarkers = []
 
 const cityIcon = L.icon({
     // iconUrl: "{{ url_for('static',filename='Pictures/city.png') }}",
@@ -87,6 +88,45 @@ function onCityClick(marker, city) {
     // linkRowDetailsTrack(marker, 'link');
 }
 
+// The set of actions to do when we want to select a flight.
+function onLocationClick(marker, location, type) {
+    let popupContent
+
+
+    $.ajax({
+        type: "GET",
+        contentType: 'application/json;charset=UTF-8',
+        url: "http://127.0.0.1:5000/" + type + "/" + location.location_id,    
+        success: function(result) {
+            if (type === "parks") {
+                popupContent = '<h6>' + result[0].name + ', ' + result[0].state +
+                 '</h6><br><h6>Website: <a target="_blank" href=' +
+                  result[0].website + '>Click</a>' 
+            }
+            else if (type === "campsites") {
+                popupContent = '<h6>' + result[0].name + ', ' + result[0].state + '</h6><h6>City: ' +
+                 result[0].city + '</h6><br><h6>Phone: ' + result[0].phone
+            }
+            else { //airbnb
+                popupContent = '<h6>' + result[0].name + ', ' + result[0].state + '</h6><br><h6>City: ' +
+                 result[0].city + '</h6><br><h6>Property: ' + result[0].property_type + '</h6><br><h6>Rank: ' +  
+                 result[0].rank_score + '</h6><br><h6>Website: <a target="_blank" href=' +
+                 result[0].listing_url + '>Click</a>' + '<br><h6>Price: ' + result[0].price + ' $</h6>'
+            }
+            marker.bindPopup(popupContent)
+            marker.openPopup()
+        },
+        error: function(result) {
+            alert('error: unable to submit');
+        },
+        dataType: "json",
+      });
+    // marker.openPopup()
+    isMarkerClicked = true;
+    clickedMarker = marker;
+    // linkRowDetailsTrack(marker, 'link');
+}
+
 // Sets a new location for the marker,
 function moveMarker(marker, lat, lon) {
     const newLatLng = new L.LatLng(lat, lon);
@@ -105,6 +145,36 @@ function addCityToMap(city) {
     mymap.addLayer(marker);
     shownLocations.push(city)
     return marker;
+}
+
+// Adds an airplane marker to the map.
+function addLocationToMap(location) {
+    let icon, type
+    switch(location.type) {
+        case 0:
+          type = "campsites" 
+          icon = campIcon
+          break;
+        case 1:
+            type = "parks"
+            icon = parkIcon
+          break;
+        case 2:
+            type = "airbnb"
+            icon = airbnbIcon
+        break;
+        default:
+          // code block
+      }
+    const marker = new L.Marker([location.latitude, location.longitude], { icon: icon });
+    // const popupContent = '<h6>' + location.name + ', ' + location.state + '</h6>'
+    // marker.bindPopup(popupContent)
+    marker.addEventListener('click', () => {
+        onLocationClick(marker, location, type);  
+    }, false);
+    mymap.addLayer(marker);
+    shownLocations.push(location)
+    shownMarkers.push(marker)
 }
 
 // Removes an airplane marker from the map.

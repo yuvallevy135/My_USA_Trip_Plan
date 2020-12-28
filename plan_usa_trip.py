@@ -324,7 +324,7 @@ api = Api(app)
 
 app.config['MYSQL_HOST'] = "localhost"
 app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "Aa123456"
+app.config['MYSQL_PASSWORD'] = "25111996"
 app.config['MYSQL_DB'] = "plan_trip"
 mysql = MySQL(app)
 
