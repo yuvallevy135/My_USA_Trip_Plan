@@ -681,14 +681,14 @@ class Cities(Resource):
 # A Class that takes care of everything that relates to the Locations table.
 class Locations(Resource):
 
-    def get(self):
+    def post(self):
         try:
             cur = mysql.connection.cursor()
             type_to_table = {'campsites': 0, 'parks': 1, 'airbnb': 2}
             select_part = "SELECT *"
             from_part = " FROM locations"
             condition = " Where "
-            tables_names_list = request.json['list']
+            tables_names_list = request.json['filterList']
             my_query = select_part + from_part
             flag = False
             for i in tables_names_list:
