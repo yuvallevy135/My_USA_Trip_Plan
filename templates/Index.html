@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='Styles/Autocomplete.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='Styles/Signup.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='Styles/Login.css') }}">
+
 <!--    <link rel="stylesheet" type="text/css" href="Styles/Autocomplete.css">-->
 <!--    <link rel="stylesheet" type="text/css" href="Styles/Signup.css">-->
 <!--    <link rel="stylesheet" type="text/css" href="Styles/Login.css">-->
@@ -26,7 +27,7 @@
 
     <script src="{{ url_for('static',filename='Scripts/Map.js') }}" async></script>
     <script src="{{ url_for('static',filename='Scripts/ModalExit.js') }}" async></script>
-    <script src="{{ url_for('static',filename='Scripts/AutoComplete.js')}}" async></script>
+    <script src="{{ url_for('static',filename='Scripts/Requests.js')}}" async></script>
     <script src="{{ url_for('static',filename='Scripts/Signup.js') }}" async></script>
     <script src="{{ url_for('static',filename='Scripts/Login.js') }}" async></script>
     <script src="{{ url_for('static',filename='Scripts/FlowManager.js') }}" async></script>
@@ -105,15 +106,72 @@
                   <br>
 
                   <input id="plantrip" type="submit" value="Plan Trip!" onclick="hideSearch()">
-                </form>
-
-                <div id="locations" style="display: none;">
-                  <h6>STARTING FROM</h6>
-                  <h6>LAST DESTINATION</h6>
-                </div>      
-                
+                </form>                         
               </div>
-              
+              <div id="locations" style="display: none; font-size: large; color: black;">                
+                <ul id="myLocationsTable">
+                </ul>
+
+
+
+              </div>
+              <style>
+                /* #sortable { list-style-type: none; margin: 0; padding: 0; width: 100%;}
+                #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 50px; } */
+                /* #sortable li span { position: absolute; margin-left: -1.3em; } */
+
+                ul li {
+                  border: 1px solid #ddd;
+                  margin-top: -1px; /* Prevent double borders */
+                  background-color: #f6f6f6;
+                  padding: 12px;
+                  text-decoration: none;
+                  font-size: 18px;
+                  color: black;
+                  display: block;
+                  position: relative;
+                }
+
+                ul li:hover {
+                  background-color: #eee;
+                }
+
+                .close {
+                  color: black;
+                  cursor: pointer;
+                  position: absolute;
+                  top: 50%;
+                  right: 0%;
+                  padding: 12px 16px;
+                  transform: translate(0%, -50%);
+                }
+
+                /* .close:hover {background: #bbb;} */
+                </style>
+                <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+                <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+                
+                <script>
+                $( function() {
+                  $( "#sortable" ).sortable();
+                  $( "#sortable" ).disableSelection();
+                } );
+                </script>
+                <ul id="sortable">
+                  <li>Item 1<span class="close">&times;</span></li>
+                  <li>Item 2<span class="close">&times;</span></li>
+                  <li>Item 3<span class="close">&times;</span></li>
+                </ul>
+                <script>
+                  var closebtns = document.getElementsByClassName("close");
+                  var i;
+                  
+                  for (i = 0; i < closebtns.length; i++) {
+                    closebtns[i].addEventListener("click", function() {
+                      this.parentElement.style.display = 'none';
+                    });
+                  }
+                  </script>
             </div>
           </div>
           <!-- Map side -->

@@ -324,7 +324,7 @@ api = Api(app)
 
 app.config['MYSQL_HOST'] = "localhost"
 app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "25111996"
+app.config['MYSQL_PASSWORD'] = ""
 app.config['MYSQL_DB'] = "plan_trip"
 mysql = MySQL(app)
 
@@ -483,9 +483,12 @@ class Airbnb(Resource):
 
     def get(self, airbnb_id):
         try:
-            select_what = "locations.*, airbnb.listing_url, airbnb.city, airbnb.property_type, " \
+            # select_what = "locations.*, airbnb.listing_url, airbnb.city, airbnb.property_type, " \
+            #               "airbnb.price, airbnb.rank_score"
+            # table_name = "locations join airbnb on locations.location_id = airbnb.airbnb_id"
+            select_what = "airbnb.listing_url, airbnb.city, airbnb.property_type, " \
                           "airbnb.price, airbnb.rank_score"
-            table_name = "locations join airbnb on locations.location_id = airbnb.airbnb_id"
+            table_name = "airbnb"
             extra_condition = ""
             # condition = "where locations.location_id = %s"
             airbnb = abort_if_username_doesnt_exist(select_what, table_name, 'airbnb_id', airbnb_id, extra_condition, 'get')

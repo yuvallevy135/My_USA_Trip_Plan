@@ -108,7 +108,7 @@ function onLocationClick(marker, location, type) {
                  result[0].city + '</h6><br><h6>Phone: ' + result[0].phone
             }
             else { //airbnb
-                popupContent = '<h6>' + result[0].name + ', ' + result[0].state + '</h6><br><h6>City: ' +
+                popupContent = '<h6>' + location.name + ', ' + location.state + '</h6><br><h6>City: ' +
                  result[0].city + '</h6><br><h6>Property: ' + result[0].property_type + '</h6><br><h6>Rank: ' +  
                  result[0].rank_score + '</h6><br><h6>Website: <a target="_blank" href=' +
                  result[0].listing_url + '>Click</a>' + '<br><h6>Price: ' + result[0].price + ' $</h6>'
