@@ -4,6 +4,9 @@
 # But not these files...
 !.gitignore
 !static
+!static/Pictures
+!static/Scripts
+!static/Styles
 !templates
 !db_creator.py
 !plan_usa_trip.py
